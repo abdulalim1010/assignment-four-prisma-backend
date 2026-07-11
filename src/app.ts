@@ -24,5 +24,11 @@ app.use("/api/v1/auth", AuthRoutes);
 // User Routes
 app.use("/api/v1/users", userRouter)
 app.use(globalErrorHandler);
+app.use(
+ "/api/v1/auth",
+ AuthRoutes
+);
+
+
 
 export default app;

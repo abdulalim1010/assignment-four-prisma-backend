@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
+import sendResponse from "../../utils/sendResponse";
+import catchAsync from "../../utils/catchAsync";
 
 
 const registerUser = async (req: Request, res: Response) => {
@@ -50,7 +52,31 @@ const loginUser = async (
 
 };
 
+const getMe = catchAsync(
+    async(
+        req: Request,
+        res: Response
+    )=>{
+
+
+        const user = req.user;
+
+
+        sendResponse(res,{
+            statusCode:200,
+            success:true,
+            message:"User profile fetched successfully",
+            data:user
+        });
+
+
+    }
+);
+
+
+
 export const AuthController = {
   registerUser,
-  loginUser
+  loginUser,
+  getMe
 };
