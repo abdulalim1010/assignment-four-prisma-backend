@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
-import router from "./modules/user/user.route";
 
+import { AuthRoutes } from "./modules/auth/auth.route";
+import userRouter from "./modules/user/user.route";
+import globalErrorHandler from "./middleware/globalErrorHandler";
 
 const app = express();
 
@@ -16,6 +18,11 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/api/users", router);
+// Auth Routes
+app.use("/api/v1/auth", AuthRoutes);
+
+// User Routes
+app.use("/api/v1/users", userRouter)
+app.use(globalErrorHandler);
 
 export default app;
