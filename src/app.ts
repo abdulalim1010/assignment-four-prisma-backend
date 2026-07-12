@@ -11,6 +11,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+
+  next();
+});
+
 app.get("/", (req, res) => {
   res.json({
     success: true,

@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { Role } from "@prisma/client";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import  { JwtPayload } from "jsonwebtoken";
 
 import config from "../config";
 
 import AppError from "../errors/AppError";
 import { prisma } from "../lib/prisma";
 import catchAsync from "../utils/catchAsync";
+import { jwtUtils } from "../utils/jwt";
 
 
 declare global {
@@ -65,9 +66,9 @@ if(!token){
 
 
 
-const decoded = jwt.verify(
-    token,
-    config.jwt_access_secret as string
+const decoded = jwtUtils.verifyToken(
+  token,
+  config.jwt_access_secret
 ) as JwtPayload;
 
 

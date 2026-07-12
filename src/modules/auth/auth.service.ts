@@ -1,94 +1,97 @@
 import bcrypt from "bcryptjs";
+import httpStatus from "http-status";
+
 import { ILoginUser, IRegisterUser } from "./auth.interface";
 import { prisma } from "../../lib/prisma";
-import jwt from "jsonwebtoken";
-
+import { jwtUtils } from "../../utils/jwt";
+import config from "../../config";
+import AppError from "../../errors/AppError";
 
 const registerUser = async (payload: IRegisterUser) => {
+  // Check existing user
+  const isUserExist = await prisma.user.findUnique({
+    where: {
+      email: payload.email,
+    },
+  });
 
-    const isUserExist = await prisma.user.findUnique({
-        where:{
-            email:payload.email
-        }
-    });
-
-    if(isUserExist){
-        throw new Error("User already exists");
-    }
-
-    const hashedPassword = await bcrypt.hash(
-        payload.password,
-        10
+  if (isUserExist) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      "User already exists"
     );
+  }
 
-    const user = await prisma.user.create({
-        data:{
-            ...payload,
-            password:hashedPassword
-        }
-    });
+  // Hash password
+  const hashedPassword = await bcrypt.hash(
+    payload.password,
+    Number(config.bcrypt_salt_rounds)
+  );
 
-    return user;
+  // Create user
+  const user = await prisma.user.create({
+    data: {
+      ...payload,
+      password: hashedPassword,
+    },
+  });
+
+  return user;
 };
 
 const loginUser = async (payload: ILoginUser) => {
-
-  // 1. Find user by email
+  // Find user
   const user = await prisma.user.findUnique({
     where: {
-      email: payload.email
-    }
+      email: payload.email,
+    },
   });
 
-
   if (!user) {
-    throw new Error("User not found");
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "User not found"
+    );
   }
 
-
-  // 2. Compare password
-
+  // Compare password
   const isPasswordMatched = await bcrypt.compare(
     payload.password,
     user.password
   );
 
-
   if (!isPasswordMatched) {
-    throw new Error("Invalid password");
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "Invalid credentials"
+    );
   }
 
-
-  // 3. Create JWT token
-
-  const token = jwt.sign(
+  // Create Access Token
+  const accessToken = jwtUtils.createToken(
     {
-      id: user.id,
+      userId: user.id,
+      name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
     },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: "7d"
-    }
+    config.jwt_access_secret,
+    config.jwt_access_expires_in
   );
 
-
   return {
-    token,
+    accessToken,
     user: {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role
-    }
+      role: user.role,
+      status: user.status,
+    },
   };
-
 };
-
-
 
 export const AuthService = {
   registerUser,
-  loginUser
+  loginUser,
 };
