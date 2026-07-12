@@ -6,6 +6,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 enum Role {
   TENANT
   LANDLORD
@@ -18,18 +19,64 @@ enum UserStatus {
 }
 
 model User {
-  id        String      @id @default(uuid())
-  name      String
-  email     String      @unique
-  password  String
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
 
-  role      Role
-  status    UserStatus  @default(ACTIVE)
+  role   Role
+  status UserStatus @default(ACTIVE)
 
-  phone     String?
-  address   String?
-  profile   String?
+  phone   String?
+  address String?
+  profile String?
+
+  properties Property[]
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id String @id @default(uuid())
+
+  name String @unique
+
+  properties Property[]
+
+  createdAt DateTime @default(now())
+}
+
+model Property {
+  id String @id @default(uuid())
+
+  title String
+
+  description String
+
+  location String
+
+  price Float
+
+  bedrooms Int
+
+  bathrooms Int
+
+  propertyType String
+
+  available Boolean @default(true)
+
+  image String?
+
+  landlordId String
+
+  categoryId String
+
+  landlord User @relation(fields: [landlordId], references: [id])
+
+  category Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+
   updatedAt DateTime @updatedAt
 }
