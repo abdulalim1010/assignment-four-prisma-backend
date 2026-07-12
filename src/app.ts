@@ -5,6 +5,7 @@ import { AuthRoutes } from "./modules/auth/auth.route";
 import userRouter from "./modules/user/user.route";
 import globalErrorHandler from "./middleware/globalErrorHandler";
 import { CategoryRoutes } from "./modules/category/category.route";
+import { PropertyRoutes } from "./modules/property/property.route";
 
 const app = express();
 
@@ -41,6 +42,11 @@ app.use(
   CategoryRoutes
 );
 
+
+app.use(
+ "/api/v1/properties",
+ PropertyRoutes
+);
 
 
 export default app;
