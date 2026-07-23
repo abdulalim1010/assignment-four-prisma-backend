@@ -26,6 +26,8 @@ const createUser = async(req:Request,res:Response)=>{
 };
 
 
+
+
 const getUsers = async(req:Request,res:Response)=>{
 
     const result = await userService.getUsers();
@@ -38,7 +40,39 @@ const getUsers = async(req:Request,res:Response)=>{
 };
 
 
+
+
+
+// Current logged in user profile
+const getMe = async(
+    req:Request,
+    res:Response
+)=>{
+
+
+    res.status(200).json({
+
+        success:true,
+
+        message:"User profile fetched successfully",
+
+        data:req.user
+
+    });
+
+
+};
+
+
+
+
+
 export const userController = {
+
     createUser,
-    getUsers
+
+    getUsers,
+
+    getMe
+
 };
