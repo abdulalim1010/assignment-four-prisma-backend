@@ -28,11 +28,25 @@ const registerUser = async (payload: IRegisterUser) => {
     Number(config.bcrypt_salt_rounds)
   );
 
-  // Create user
+  // Create User + Empty Profile
   const user = await prisma.user.create({
     data: {
-      ...payload,
+      name: payload.name,
+      email: payload.email,
       password: hashedPassword,
+      role: payload.role,
+
+      profile: {
+        create: {
+          bio: "",
+          photo: "",
+          phone: "",
+          address: "",
+        },
+      },
+    },
+    include: {
+      profile: true,
     },
   });
 
@@ -44,6 +58,9 @@ const loginUser = async (payload: ILoginUser) => {
   const user = await prisma.user.findUnique({
     where: {
       email: payload.email,
+    },
+    include: {
+      profile: true,
     },
   });
 
@@ -87,6 +104,9 @@ const loginUser = async (payload: ILoginUser) => {
       email: user.email,
       role: user.role,
       status: user.status,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      profile: user.profile,
     },
   };
 };

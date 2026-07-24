@@ -27,11 +27,25 @@ model User {
   role   Role
   status UserStatus @default(ACTIVE)
 
+  // Relations
+  profile    Profile?
+  properties Property[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id String @id @default(uuid())
+
+  photo   String?
+  bio     String?
   phone   String?
   address String?
-  profile String?
 
-  properties Property[]
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -45,38 +59,30 @@ model Category {
   properties Property[]
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Property {
   id String @id @default(uuid())
 
-  title String
-
-  description String
-
-  location String
-
-  price Float
-
-  bedrooms Int
-
-  bathrooms Int
-
-  propertyType String
-
-  available Boolean @default(true)
+  title         String
+  description   String
+  location      String
+  price         Float
+  bedrooms      Int
+  bathrooms     Int
+  propertyType  String
+  available     Boolean @default(true)
 
   image String?
 
   landlordId String
-
   categoryId String
 
-  landlord User @relation(fields: [landlordId], references: [id])
+  landlord User @relation(fields: [landlordId], references: [id], onDelete: Cascade)
 
   category Category @relation(fields: [categoryId], references: [id])
 
   createdAt DateTime @default(now())
-
   updatedAt DateTime @updatedAt
 }
