@@ -6,6 +6,7 @@ import userRouter from "./modules/user/user.route";
 import globalErrorHandler from "./middleware/globalErrorHandler";
 import { CategoryRoutes } from "./modules/category/category.route";
 import { PropertyRoutes } from "./modules/property/property.route";
+import { NewsRoutes } from "./modules/news/news.route";
 
 const app = express();
 
@@ -46,6 +47,10 @@ app.use(
 app.use(
  "/api/v1/properties",
  PropertyRoutes
+);
+app.use(
+  "/api/v1/news",
+  NewsRoutes
 );
 
 

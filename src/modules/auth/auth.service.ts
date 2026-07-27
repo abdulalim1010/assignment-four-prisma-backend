@@ -50,7 +50,22 @@ const registerUser = async (payload: IRegisterUser) => {
     },
   });
 
-  return user;
+  const accessToken = jwtUtils.createToken(
+  {
+    userId: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  },
+  config.jwt_access_secret,
+  config.jwt_access_expires_in
+);
+
+
+return {
+  accessToken,
+  user
+};
 };
 
 const loginUser = async (payload: ILoginUser) => {

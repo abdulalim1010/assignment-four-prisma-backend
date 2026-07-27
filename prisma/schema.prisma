@@ -27,9 +27,35 @@ model User {
   role   Role
   status UserStatus @default(ACTIVE)
 
+  // ⭐ New
+  isPremium Boolean @default(false)
+
   // Relations
   profile    Profile?
   properties Property[]
+  news       News[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+//news
+model News {
+  id          String   @id @default(uuid())
+
+  title       String
+  description String
+  content     String
+
+  image       String?
+
+  category    String
+
+  isPremium   Boolean @default(false)
+
+  authorId    String
+  author       User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
