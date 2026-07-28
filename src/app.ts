@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import { AuthRoutes } from "./modules/auth/auth.route";
 import userRouter from "./modules/user/user.route";
@@ -8,7 +9,6 @@ import { CategoryRoutes } from "./modules/category/category.route";
 import { PropertyRoutes } from "./modules/property/property.route";
 import { NewsRoutes } from "./modules/news/news.route";
 import { PaymentRoutes } from "./modules/payment/payment.route";
-
 
 const app = express();
 
@@ -20,7 +20,14 @@ app.use(
 );
 
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
+app.use(cookieParser());
 
 app.use(express.json());
 
@@ -36,7 +43,6 @@ app.get("/", (req, res) => {
 
 
 // Routes
-
 app.use("/api/v1/auth", AuthRoutes);
 
 app.use("/api/v1/users", userRouter);
