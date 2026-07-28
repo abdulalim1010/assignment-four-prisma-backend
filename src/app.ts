@@ -9,16 +9,23 @@ import { PropertyRoutes } from "./modules/property/property.route";
 import { NewsRoutes } from "./modules/news/news.route";
 import { PaymentRoutes } from "./modules/payment/payment.route";
 
+
 const app = express();
 
+
+// Stripe webhook MUST be before express.json()
+app.use(
+  "/api/v1/payment/webhook",
+  express.raw({ type: "application/json" })
+);
+
+
 app.use(cors());
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-
-  next();
-});
 
 app.get("/", (req, res) => {
   res.json({
@@ -27,39 +34,24 @@ app.get("/", (req, res) => {
   });
 });
 
-// Auth Routes
+
+// Routes
+
 app.use("/api/v1/auth", AuthRoutes);
 
-// User Routes
-app.use("/api/v1/users", userRouter)
+app.use("/api/v1/users", userRouter);
+
+app.use("/api/v1/categories", CategoryRoutes);
+
+app.use("/api/v1/properties", PropertyRoutes);
+
+app.use("/api/v1/news", NewsRoutes);
+
+app.use("/api/v1/payment", PaymentRoutes);
+
+
+// Error handler LAST
 app.use(globalErrorHandler);
-app.use(
- "/api/v1/auth",
- AuthRoutes
-);
-
-
-app.use(
-  "/api/v1/categories",
-  CategoryRoutes
-);
-
-
-app.use(
- "/api/v1/properties",
- PropertyRoutes
-);
-app.use(
-  "/api/v1/news",
-  NewsRoutes
-);
-
-
-
-app.use(
-  "/api/v1/payment",
-  PaymentRoutes
-);
 
 
 export default app;

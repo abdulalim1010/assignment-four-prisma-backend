@@ -30,10 +30,9 @@ const paymentSuccess = async (
   });
 };
 
-const webhook = async (
-  req: Request,
-  res: Response
-) => {
+const webhook = async (req: Request, res: Response) => {
+  console.log("✅ Webhook Hit");
+
   const signature = req.headers["stripe-signature"] as string;
 
   const result = await PaymentService.webhook(
