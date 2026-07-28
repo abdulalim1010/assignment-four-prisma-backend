@@ -7,6 +7,7 @@ import globalErrorHandler from "./middleware/globalErrorHandler";
 import { CategoryRoutes } from "./modules/category/category.route";
 import { PropertyRoutes } from "./modules/property/property.route";
 import { NewsRoutes } from "./modules/news/news.route";
+import { PaymentRoutes } from "./modules/payment/payment.route";
 
 const app = express();
 
@@ -51,6 +52,13 @@ app.use(
 app.use(
   "/api/v1/news",
   NewsRoutes
+);
+
+
+
+app.use(
+  "/api/v1/payment",
+  PaymentRoutes
 );
 
 
