@@ -11,7 +11,11 @@ router.get("/", NewsController.getAllNews);
 
 router.get("/public", NewsController.getPublicNews);
 
-router.get("/premium", NewsController.getPremiumNews);
+router.get(
+  "/premium",
+  auth(Role.ADMIN, Role.LANDLORD, Role.TENANT),
+  NewsController.getPremiumNews
+);
 
 router.get("/:id", NewsController.getSingleNews);
 

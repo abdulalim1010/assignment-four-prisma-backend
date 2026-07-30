@@ -60,53 +60,55 @@ const webhook = async (body: Buffer, signature: string) => {
 
   switch (event.type) {
 
-    case "checkout.session.completed": {
+   case "checkout.session.completed": {
 
-      console.log("✅ Checkout Completed");
-
-
-      const session = event.data.object as Stripe.Checkout.Session;
+  console.log("✅ Checkout Completed");
 
 
-      console.log(
-        "Metadata:",
-        session.metadata
-      );
+  const session = event.data.object as Stripe.Checkout.Session;
 
 
-      const userId = session.metadata?.userId;
+  console.log("FULL SESSION:", session);
 
 
-      console.log(
-        "User ID:",
-        userId
-      );
+  console.log(
+    "Metadata:",
+    session.metadata
+  );
 
 
-      if (userId) {
-
-        const updatedUser = await prisma.user.update({
-
-          where: {
-            id: userId,
-          },
-
-          data: {
-            isPremium: true,
-          },
-
-        });
+  const userId = session.metadata?.userId;
 
 
-        console.log(
-          "Updated User:",
-          updatedUser.id
-        );
+  console.log(
+    "User ID:",
+    userId
+  );
 
+
+  if(userId){
+
+    const updatedUser = await prisma.user.update({
+
+      where:{
+        id:userId
+      },
+
+      data:{
+        isPremium:true
       }
 
-      break;
-    }
+    });
+
+
+    console.log(
+      "Updated User:",
+      updatedUser.email
+    );
+
+  }
+
+}
 
 
     default:

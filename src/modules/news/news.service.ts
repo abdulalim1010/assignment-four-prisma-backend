@@ -47,14 +47,16 @@ const getPublicNews = async () => {
 };
 
 const getPremiumNews = async () => {
+
   return await prisma.news.findMany({
-    where: {
-      isPremium: true,
+    where:{
+      isPremium:true,
     },
-    orderBy: {
-      createdAt: "desc",
+    orderBy:{
+      createdAt:"desc",
     },
   });
+
 };
 
 const getSingleNews = async (id: string) => {

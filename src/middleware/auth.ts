@@ -16,12 +16,13 @@ declare global {
 
         interface Request {
 
-            user?: {
-                userId:string;
-                email:string;
-                role:Role;
-                name:string;
-            }
+          user?: {
+  userId: string;
+  email: string;
+  role: Role;
+  name: string;
+  isPremium: boolean;
+}
 
         }
 
@@ -98,13 +99,22 @@ throw new AppError(
 
 
 const user = await prisma.user.findUnique({
-
-    where:{
-        id:userId
-    }
-
+  where: {
+    id: userId,
+  },
 });
 
+console.log("JWT USER ID:", userId);
+console.log("DB USER:", user);
+console.log("DB isPremium:", user?.isPremium);
+
+req.user = {
+  userId,
+  email,
+  role,
+  name,
+  isPremium: user!.isPremium,
+};
 
 
 if(!user){
@@ -129,13 +139,13 @@ if(user.status==="BLOCKED"){
 
 
 
-req.user={
-    userId,
-    email,
-    role,
-    name
+req.user = {
+  userId,
+  email,
+  role,
+  name,
+  isPremium: user.isPremium,
 };
-
 
 
 next();

@@ -29,11 +29,23 @@ const getPublicNews = async (req: Request, res: Response) => {
   });
 };
 
-const getPremiumNews = async (req: Request, res: Response) => {
+const getPremiumNews = async (
+  req: Request,
+  res: Response
+) => {
+
+  if (!req.user?.isPremium && req.user.role !== "ADMIN") {
+    throw new AppError(
+      403,
+      "Premium subscription required"
+    );
+  }
+
   const result = await NewsService.getPremiumNews();
 
-  res.json({
+  res.status(200).json({
     success: true,
+    message: "Premium news fetched successfully",
     data: result,
   });
 };
