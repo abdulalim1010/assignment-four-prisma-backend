@@ -5,40 +5,29 @@ import { prisma } from "../../lib/prisma";
 const stripe = new Stripe(config.stripe_secret_key as string);
 
 const createCheckoutSession = async (userId: string) => {
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
 
-    payment_method_types: ["card"],
-
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: "usd",
-
-          product_data: {
-            name: "Premium Subscription",
-            description: "Unlock Premium News",
-          },
-
-          unit_amount: 500, // $5.00
-        },
-      },
-    ],
-
-    metadata: {
-      userId,
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
     },
+  });
 
-    success_url: `${config.frontend_url}/payment/success`,
-    cancel_url: `${config.frontend_url}/payment/cancel`,
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (user.isPremium) {
+    throw new Error("You are already a Premium member");
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    // ...
   });
 
   return {
     url: session.url,
   };
 };
-
 const paymentSuccess = async () => {
   return {
     message: "Payment successful",
