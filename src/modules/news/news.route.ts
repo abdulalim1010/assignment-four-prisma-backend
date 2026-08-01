@@ -27,9 +27,9 @@ router.post(
 );
 
 router.patch(
-  "/:id",
-  auth(Role.ADMIN),
-  NewsController.updateNews
+ "/:id",
+ auth(Role.ADMIN),
+ NewsController.updateNews
 );
 
 router.delete(
