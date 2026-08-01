@@ -1,21 +1,70 @@
 import { Request, Response } from "express";
 import { PaymentService } from "./payment.service";
 
+
+import Stripe from "stripe";
+import config from "../../config";
+
+
+const stripe = new Stripe(
+  config.stripe_secret_key!,
+);
+
+
 const createCheckoutSession = async (
   req: Request,
   res: Response
 ) => {
-const userId = req.user!.userId;
 
-  const result = await PaymentService.createCheckoutSession(
-    userId
-  );
+  console.log("CREATE CHECKOUT USER:", req.user);
 
-  res.status(200).json({
-    success: true,
-    message: "Checkout session created successfully",
-    data: result,
+
+  const session =
+    await stripe.checkout.sessions.create({
+
+      mode:"payment",
+
+      payment_method_types:[
+        "card"
+      ],
+
+      line_items:[
+        {
+          price_data:{
+            currency:"usd",
+
+            product_data:{
+              name:"Premium Subscription",
+            },
+
+            unit_amount:500,
+          },
+
+          quantity:1,
+        }
+      ],
+
+
+      metadata:{
+        userId:req.user!.userId,
+      },
+
+
+      success_url:
+      "http://localhost:3000/payment/success",
+
+
+      cancel_url:
+      "http://localhost:3000/payment/cancel",
+
+    });
+
+
+  res.json({
+    success:true,
+    url:session.url,
   });
+
 };
 
 const paymentSuccess = async (

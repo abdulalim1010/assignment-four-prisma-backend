@@ -1,23 +1,25 @@
+import AppError from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { INews } from "./news.interface";
 
-const createNews = async (payload: INews) => {
-  const result = await prisma.news.create({
-    data: payload,
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-    },
-  });
+const createNews = async (
+  payload: INews,
+  userId: string
+) => {
 
-  return result;
+ return prisma.news.create({
+
+   data: {
+
+     ...payload,
+
+     authorId: userId,
+
+   }
+
+ });
+
 };
-
 const getAllNews = async () => {
   return await prisma.news.findMany({
     include: {
@@ -79,6 +81,31 @@ const updateNews = async (id: string, payload: Partial<INews>) => {
   });
 };
 
+
+//premium or not
+const togglePremium = async (
+  id: string
+) => {
+
+  const news = await prisma.news.findUnique({
+    where: { id },
+  });
+
+  if (!news) {
+    throw new AppError(404, "News not found");
+  }
+
+  return prisma.news.update({
+    where: {
+      id,
+    },
+    data: {
+      isPremium: !news.isPremium,
+    },
+  });
+
+};
+
 const deleteNews = async (id: string) => {
   return await prisma.news.delete({
     where: {
@@ -95,4 +122,5 @@ export const NewsService = {
   getSingleNews,
   updateNews,
   deleteNews,
+  togglePremium,
 };

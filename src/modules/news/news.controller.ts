@@ -1,14 +1,24 @@
 import { Request, Response } from "express";
 import { NewsService } from "./news.service";
 
-const createNews = async (req: Request, res: Response) => {
-  const result = await NewsService.createNews(req.body);
+const createNews = async (
+  req: Request,
+  res: Response
+) => {
+
+
+  const result = await NewsService.createNews(
+    req.body,
+    req.user!.userId
+  );
+
 
   res.status(201).json({
     success: true,
     message: "News created successfully",
     data: result,
   });
+
 };
 
 const getAllNews = async (req: Request, res: Response) => {
@@ -73,6 +83,24 @@ const updateNews = async (req: Request, res: Response) => {
   });
 };
 
+//premium or not
+const togglePremium = async (
+  req: Request,
+  res: Response
+) => {
+  const id = req.params.id as string;
+
+
+
+  const result = await NewsService.togglePremium(id);
+
+  res.json({
+    success: true,
+    message: "Premium status updated successfully",
+    data: result,
+  });
+};
+
 const deleteNews = async (req: Request, res: Response) => {
   const id = req.params.id as string;
 
@@ -87,9 +115,10 @@ const deleteNews = async (req: Request, res: Response) => {
 export const NewsController = {
   createNews,
   getAllNews,
-  getPublicNews,
+  getPublicNews,                                                                          
   getPremiumNews,
   getSingleNews,
-  updateNews,
+  updateNews,                                                             
   deleteNews,
+  togglePremium,                                                                
 };

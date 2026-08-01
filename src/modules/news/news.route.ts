@@ -21,15 +21,26 @@ router.get("/:id", NewsController.getSingleNews);
 
 // Admin Only
 router.post(
-  "/",
-  auth(Role.ADMIN),
-  NewsController.createNews
+ "/",
+ auth(Role.ADMIN),
+ NewsController.createNews
 );
+
+
 
 router.patch(
  "/:id",
  auth(Role.ADMIN),
  NewsController.updateNews
+);
+
+
+
+//premium or not 
+router.patch(
+  "/:id/toggle-premium",
+  auth(Role.ADMIN),
+  NewsController.togglePremium
 );
 
 router.delete(
