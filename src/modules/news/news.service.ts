@@ -37,29 +37,42 @@ const getAllNews = async () => {
   });
 };
 
-const getPublicNews = async () => {
-  return await prisma.news.findMany({
+const getPublicNews = async (
+  search?: string
+) => {
+  return prisma.news.findMany({
     where: {
       isPremium: false,
+      ...(search && {
+        title: {
+          contains: search,
+          mode: "insensitive",
+        },
+      }),
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 };
-
-const getPremiumNews = async () => {
-
-  return await prisma.news.findMany({
-    where:{
-      isPremium:true,
+const getPremiumNews = async (
+  search?: string
+) => {
+  return prisma.news.findMany({
+    where: {
+      isPremium: true,
+      ...(search && {
+        title: {
+          contains: search,
+          mode: "insensitive",
+        },
+      }),
     },
-    orderBy:{
-      createdAt:"desc",
+    orderBy: {
+      createdAt: "desc",
     },
   });
-
-};
+};;
 
 const getSingleNews = async (id: string) => {
   return await prisma.news.findUnique({

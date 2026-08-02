@@ -21,22 +21,36 @@ const createNews = async (
 
 };
 
-const getAllNews = async (req: Request, res: Response) => {
-  const result = await NewsService.getAllNews();
+const getAllNews = async (
+  req: Request,
+  res: Response
+) => {
+
+  const search = req.query.search as string;
+
+  const result = await NewsService.getAllNews(search);
 
   res.json({
     success: true,
     data: result,
   });
+
 };
 
-const getPublicNews = async (req: Request, res: Response) => {
-  const result = await NewsService.getPublicNews();
+const getPublicNews = async (
+  req: Request,
+  res: Response
+) => {
+
+  const search = req.query.search as string;
+
+  const result = await NewsService.getPublicNews(search);
 
   res.json({
     success: true,
     data: result,
   });
+
 };
 
 const getPremiumNews = async (
@@ -51,13 +65,16 @@ const getPremiumNews = async (
     );
   }
 
-  const result = await NewsService.getPremiumNews();
+  const search = req.query.search as string;
+
+  const result = await NewsService.getPremiumNews(search);
 
   res.status(200).json({
     success: true,
     message: "Premium news fetched successfully",
     data: result,
   });
+
 };
 
 const getSingleNews = async (req: Request, res: Response) => {
@@ -101,7 +118,10 @@ const togglePremium = async (
   });
 };
 
-const deleteNews = async (req: Request, res: Response) => {
+const deleteNews = async (
+  req: Request,
+  res: Response
+) => {
   const id = req.params.id as string;
 
   await NewsService.deleteNews(id);
